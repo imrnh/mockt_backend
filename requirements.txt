@@ -2,3 +2,10 @@ fastapi
 uvicorn
 sqlalchemy
 psycopg2-binary
+python-jose
+firebase-admin
+httpx
+pymongo[srv]
+python-dotenv
+motor
+certifi
