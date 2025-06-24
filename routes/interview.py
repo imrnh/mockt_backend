@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, Query, Request
-from api.database import generated_interview_collection, tags_collection, resume_collection
+from api.database import generated_interview_collection, tags_collection, resume_collection, answers_collection
 from api.service.generate_interview_questions import generate_interview_questions
 from api.service.tts import generate_speech_from_text
-from api.models.interview import PresetInterviewIn, InterviewSessionRequest
-from api.models.interview import TagIn, TagOut
+from api.models.interview import InterviewAnswerCreate, PresetInterviewIn, InterviewSessionRequest
+from api.models.interview import TagIn, TagOut, InterviewAnswer
+from api.service.answer_feedback import get_interview_feedback
 
 import json
 from bson import ObjectId
@@ -216,3 +217,38 @@ async def list_tags():
     async for tag in tags_cursor:
         tags.append(TagOut(id=str(tag["_id"]), name=tag["name"]))
     return tags
+
+
+
+
+"""
+
+ Interview Session
+
+"""
+
+@router.post("/evaluate_interview_answer")
+def evaluate_interview(intv: InterviewAnswer):
+    feedback = get_interview_feedback(answer_text=intv.answer_text, question_text=intv.question_text, job_role=intv.job_role)
+    return feedback
+
+
+
+@router.post("/submit_answer/")
+async def submit_answer(payload: InterviewAnswerCreate):
+    interview_obj_id = ObjectId(payload.interview_id)
+    field_key = f"answers.answer_{payload.answer_index}"
+
+    update_result = await answers_collection.update_one(
+        {
+            "interview_id": interview_obj_id,
+        },
+        {
+            "$push": {field_key: payload.answer_entry.dict()}
+        },
+        upsert=True
+    )
+
+    if update_result.upserted_id:
+        return {"message": "Answer created", "id": str(update_result.upserted_id)}
+    return {"message": "Answer updated"}
