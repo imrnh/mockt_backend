@@ -40,6 +40,7 @@ async def make_new_interview_session(payload: InterviewSessionRequest, request: 
     question_count = payload.question_count
     user_id = request.state.user_id
 
+
     # Fetch user resume
     user_resume_doc = await resume_collection.find_one({"user_id": user_id})
     if not user_resume_doc or "resume_data" not in user_resume_doc:

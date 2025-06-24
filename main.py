@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.middleware.user_manager import AttachUserIDMiddleware
+from api.middleware.user_manager import FirebaseAuthMiddleware
 from api.routes import users, admin, interview
 from api.database import init_indexes
 
@@ -18,7 +18,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(AttachUserIDMiddleware)
+app.add_middleware(FirebaseAuthMiddleware)
 
 
 # Register routes
