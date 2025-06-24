@@ -10,6 +10,11 @@ class PresetInterviewIn(BaseModel):
     questions: List[QuestionItem]
     tags: List[str] 
 
+class InterviewSessionRequest(BaseModel):
+    job_role: str
+    job_description: str
+    interview_difficulty: str
+    question_count: int
 
 # Create interview tag
 class TagIn(BaseModel):
@@ -20,3 +25,5 @@ class TagOut(BaseModel):
     name: str
 
 
+class PDFConversionRequest(BaseModel):
+    pdf_path: str

@@ -9,3 +9,8 @@ pymongo[srv]
 python-dotenv
 motor
 certifi
+google-genai
+pdf2image 
+python-multipart 
+pillow
+google-generativeai
